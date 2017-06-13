@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">RxRoom example</string>
+    <string name="text_name">Name</string>
+    <string name="text_place">Place</string>
+    <string name="text_quantity">Quantity</string>
+    <string name="text_tags">Tags</string>
+    <string name="text_description">Description</string>
+</resources>
