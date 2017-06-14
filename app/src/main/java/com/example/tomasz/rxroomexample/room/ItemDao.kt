@@ -1,10 +1,8 @@
 package com.example.tomasz.rxroomexample.room
 
 import android.arch.persistence.room.*
-import com.example.tomasz.rxroomexample.ApplicationScope
 import io.reactivex.Flowable
 
-@ApplicationScope
 @Dao
 interface ItemDao
 {

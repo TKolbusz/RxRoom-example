@@ -34,7 +34,7 @@ android {
 kapt {
     generateStubs = true
 }
-''
+
 dependencies {
     // kotlin
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin"
@@ -89,10 +89,9 @@ buildscript {
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots/'
-        maven { url "https://jitpack.io" }
         maven { url 'https://maven.google.com' }
     }
 }

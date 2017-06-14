@@ -25,22 +25,20 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
 
     override fun onDestroy() = disposables.clear()
 
-    private fun onGetItems() =
-            itemDao.getAllItems()
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(view::showData, {
-                        t ->
-                        view.showLoadingDataError(t.localizedMessage)
-                    })
+    private fun onGetItems() = itemDao.getAllItems()
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(view::showData, {
+                throwable ->
+                view.showLoadingDataError(throwable.localizedMessage)
+            })
 
-    private fun onGetItemsAt() =
-            itemDao.getItemsAt("Desk")
-                    .filter { items -> items.isNotEmpty() }
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(view::showItemsAt, {
-                        t ->
-                        view.showLoadingDataError(t.localizedMessage)
-                    })
+    private fun onGetItemsAt() = itemDao.getItemsAt("Desk")
+            .filter { items -> items.isNotEmpty() }
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(view::showItemsAt, {
+                throwable ->
+                view.showLoadingDataError(throwable.localizedMessage)
+            })
 
     fun onInsert(item: Item)
     {
