@@ -1,8 +1,9 @@
 package com.example.tomasz.rxroomexample.items
 
 import android.os.Bundle
+import android.os.Handler
 import com.example.tomasz.rxroomexample.BaseActivity
-import com.example.tomasz.rxroomexample.room.Item
+import com.example.tomasz.rxroomexample.utils.Utils
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
@@ -28,16 +29,18 @@ class ItemsActivity : BaseActivity()
 
     private fun insertValuesToDatabase()
     {
-        val item1 = Item("Pencil", "Table", "1", "sharpest pencil in the world")
-        val item2 = Item("Screen", "Desk", "1", "broken screen")
-        val item3 = Item("Chair", "Bedroom", "2", "old chairs")
-        presenter.onInsert(item1)
-        presenter.onInsert(item2)
-        presenter.onInsert(item3)
+        presenter.onInsert(Utils.items[0])
+        Handler().postDelayed({ presenter.onInsert(Utils.items[1]) }, 3000)
+        Handler().postDelayed({ presenter.onInsert(Utils.items[2]) }, 7000)
+        Handler().postDelayed({ presenter.onInsert(Utils.items[3]) }, 10000)
     }
 
     override fun onDestroy()
     {
+        presenter.onDelete(Utils.items[0])
+        presenter.onDelete(Utils.items[1])
+        presenter.onDelete(Utils.items[2])
+        presenter.onDelete(Utils.items[3])
         presenter.onDestroy()
         super.onDestroy()
     }

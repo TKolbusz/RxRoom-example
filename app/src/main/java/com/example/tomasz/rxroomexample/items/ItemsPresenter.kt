@@ -1,6 +1,5 @@
 package com.example.tomasz.rxroomexample.items
 
-import android.util.Log
 import com.example.tomasz.rxroomexample.Presenter
 import com.example.tomasz.rxroomexample.room.Item
 import com.example.tomasz.rxroomexample.room.ItemDao
@@ -19,7 +18,8 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
     {
         this.view = view
         disposables.addAll(
-                onGetItems()
+                onGetItems(),
+                onGetItemsAt()
         )
     }
 
@@ -28,8 +28,19 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
     private fun onGetItems() =
             itemDao.getAllItems()
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(view::showData,
-                            { t -> view.showLoadingDataError(t.localizedMessage) })
+                    .subscribe(view::showData, {
+                        t ->
+                        view.showLoadingDataError(t.localizedMessage)
+                    })
+
+    private fun onGetItemsAt() =
+            itemDao.getItemsAt("Desk")
+                    .filter { items -> items.isNotEmpty() }
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(view::showItemsAt, {
+                        t ->
+                        view.showLoadingDataError(t.localizedMessage)
+                    })
 
     fun onInsert(item: Item)
     {
@@ -38,7 +49,17 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({ item ->
                     itemDao.insertItem(item)
-                    Log.d("Presenter", "item inserted: " + item)
                 }, { throwable -> view.showInsertingDataError(throwable.localizedMessage) })
+    }
+
+    fun onDelete(item: Item)
+    {
+        Observable.just(item)
+                .observeOn(Schedulers.io())
+                .subscribeOn(AndroidSchedulers.mainThread())
+                .subscribe(itemDao::deleteItem
+                        , { throwable ->
+                    view.showInsertingDataError(throwable.localizedMessage)
+                })
     }
 }

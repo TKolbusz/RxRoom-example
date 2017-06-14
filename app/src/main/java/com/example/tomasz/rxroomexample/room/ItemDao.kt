@@ -11,7 +11,8 @@ interface ItemDao
     @Query("SELECT * FROM items")
     fun getAllItems(): Flowable<List<Item>>
 
-    //@Query("SELECT * FROM " + DATABASE_TABLE_ITEMS + " WHERE ")
+    @Query("SELECT * FROM items WHERE place = :arg0")
+    fun getItemsAt(place: String): Flowable<List<Item>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertItem(item: Item)

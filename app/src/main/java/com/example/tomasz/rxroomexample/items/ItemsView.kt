@@ -37,6 +37,8 @@ class ItemsView @Inject constructor(activity: ItemsActivity) : RelativeLayout(ac
 
     fun showData(itemList: List<Item>) = recyclerViewAdapter.setItemsList(itemList)
 
+    fun showItemsAt(itemList: List<Item>) = showMessage("items at " + itemList[0].place + " are: " + itemList.toString())
+
     fun showLoadingDataError(message: String) = showMessage(message)
 
     fun showInsertingDataError(message: String) = showMessage(message)

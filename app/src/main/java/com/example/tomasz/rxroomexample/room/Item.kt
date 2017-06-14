@@ -11,12 +11,14 @@ import java.util.*
  */
 @Entity(tableName = "items")
 data class Item(
-        @ColumnInfo(name = "name") var name: String? = null,
-        @ColumnInfo(name = "place") var place: String? = null,
-        @ColumnInfo(name = "quantity") var quantity: String? = null,
+        @PrimaryKey
+        @ColumnInfo(name = "name") var name: String = "",
+        @ColumnInfo(name = "place") var place: String = "",
+        @ColumnInfo(name = "quantity") var quantity: String = "",
         @ColumnInfo(name = "description") var description: String = "",
         @ColumnInfo(name = "tags") var tags: String = "",
-        @ColumnInfo(name = "date_added_ms") var dateMS: Long = Calendar.getInstance().timeInMillis,
-        @PrimaryKey(autoGenerate = true)
-        @ColumnInfo(name = "id") var id: Long = 0
+        @ColumnInfo(name = "date_added_ms") var dateMS: Long = Calendar.getInstance().timeInMillis
 )
+{
+    override fun toString(): String = name
+}
