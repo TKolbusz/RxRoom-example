@@ -6,10 +6,10 @@ import io.reactivex.Flowable
 @Dao
 interface ItemDao
 {
-    @Query("SELECT * FROM items")
+    @Query("SELECT name, place, description, date_added_ms FROM items")
     fun getAllItems(): Flowable<List<Item>>
 
-    @Query("SELECT * FROM items WHERE place = :arg0")
+    @Query("SELECT name FROM items WHERE place = :arg0")
     fun getItemsAt(place: String): Flowable<List<Item>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

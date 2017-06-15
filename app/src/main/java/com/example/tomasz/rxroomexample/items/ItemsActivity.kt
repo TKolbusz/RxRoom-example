@@ -22,9 +22,9 @@ class ItemsActivity : BaseActivity()
         setContentView(view)
         setSupportActionBar(view.getToolbar())
 
-        insertValuesToDatabase()
-
         presenter.onCreate(view)
+
+        insertValuesToDatabase()
     }
 
     private fun insertValuesToDatabase()
