@@ -1,98 +1,69 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
-    flavorDimensions "versionCode"
+    namespace 'com.example.tomasz'
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.example.tomasz.things"
-        minSdkVersion 16
-        targetSdkVersion 25
+        applicationId "com.example.tomasz"
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 
-    sourceSets {
-        main.java.srcDirs += 'src/main/kotlin'
-        test.java.srcDirs += 'src/test/kotlin'
-        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    configurations {
+        implementation.exclude group: 'org.jetbrains', module: 'annotations'
     }
-    testOptions {
-        unitTests.returnDefaultValues = true
-    }
-}
-kapt {
-    generateStubs = true
 }
 
 dependencies {
-    // kotlin
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin"
 
-    // android stuff
-    compile "com.android.support:appcompat-v7:25.4.0"
-    compile "com.android.support:design:25.4.0"
-    compile "com.android.support.constraint:constraint-layout:1.0.2"
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+
+
+    implementation 'androidx.room:room-common:2.4.3'
+    implementation 'androidx.room:room-ktx:2.4.3'
+    implementation 'androidx.room:room-rxjava2:2.4.3'
+    kapt 'androidx.room:room-compiler:2.4.3'
+
 
     // Dagger2
-    compile "com.google.dagger:dagger:2.11"
-    compile "com.google.dagger:dagger-android:2.11"
-    compile "com.google.dagger:dagger-android-support:2.11"
-    kapt "com.google.dagger:dagger-android-processor:2.11"
-    kapt "com.google.dagger:dagger-compiler:2.11"
-    provided "org.glassfish:javax.annotation:10.0-b28"
+    implementation 'com.google.dagger:dagger:2.11'
+    implementation "com.google.dagger:dagger-android:2.11"
+    kapt 'com.google.dagger:dagger-compiler:2.11'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    // Butterknife for kotlin
-    compile "com.jakewharton:kotterknife:0.1.0-SNAPSHOT"
+    implementation "io.reactivex.rxjava2:rxkotlin:2.4.0"
+    implementation "io.reactivex.rxjava2:rxandroid:2.1.1"
 
-    // RxJava2 and RxBinding2
-    compile "io.reactivex.rxjava2:rxkotlin:2.0.0"
-    compile "io.reactivex.rxjava2:rxandroid:2.0.1"
-    compile "com.jakewharton.rxbinding2:rxbinding:2.0.0"
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'com.google.android.material:material:1.7.0'
 
-    // Room
-    compile "android.arch.persistence.room:runtime:1.0.0-alpha2"
-    compile "android.arch.persistence.room:rxjava2:1.0.0-alpha2"
-    kapt "android.arch.persistence.room:compiler:1.0.0-alpha2"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
-    // Testing
-
-    // Testing
-    testImplementation "junit:junit:4.12"
-    testImplementation "org.mockito:mockito-core:1.10.19"
-    androidTestImplementation "com.android.support:support-annotations:25.4.0"
-    androidTestImplementation "com.android.support.test:runner:0.5"
-    androidTestImplementation "com.android.support.test:rules:0.5"
-    testImplementation "de.jodamob.kotlin:kotlin-runner-junit4:0.3.1"
 }
-
-buildscript {
-    ext.kotlin = '1.1.2-5'
-    repositories {
-        mavenCentral()
-        maven { url "https://jitpack.io" }
-        maven { url 'https://maven.google.com' }
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin"
-    }
-}
-
-repositories {
-    jcenter()
-    maven {
-        url 'https://oss.sonatype.org/content/repositories/snapshots/'
-        maven { url 'https://maven.google.com' }
-    }
-}
-

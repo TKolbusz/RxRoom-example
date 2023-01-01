@@ -1,13 +1,14 @@
 package com.example.tomasz.rxroomexample.room
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Entity
-import android.arch.persistence.room.PrimaryKey
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import java.util.*
 
-@Entity(tableName = "items")
+@Entity(tableName = "item")
 data class Item(
-        @PrimaryKey
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "id")var id :Long?=null,
         @ColumnInfo(name = "name") var name: String = "",
         @ColumnInfo(name = "place") var place: String = "",
         @ColumnInfo(name = "quantity") var quantity: String = "",

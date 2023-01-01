@@ -2,14 +2,21 @@ package com.example.tomasz.rxroomexample.items
 
 import com.example.tomasz.rxroomexample.Presenter
 import com.example.tomasz.rxroomexample.room.Item
-import com.example.tomasz.rxroomexample.room.ItemDao
+import com.example.tomasz.rxroomexample.room.ItemDaoCoroutines
+import com.example.tomasz.rxroomexample.room.ItemDaoRx
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Presenter<ItemsView>
+class ItemsPresenter @Inject constructor(
+    private val itemDaoRx: ItemDaoRx,
+    private val itemDaoCoroutines: ItemDaoCoroutines,
+    ) : Presenter<ItemsView>
 {
     private val disposables: CompositeDisposable = CompositeDisposable()
     private lateinit var view: ItemsView
@@ -18,24 +25,33 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
     {
         this.view = view
         disposables.addAll(
-                onGetItems(),
-                onGetItemsAt()
+                onGetItems()
+                //onGetItemsAt()
         )
+    }
+
+    fun loadData(){
+        /*CoroutineScope(Dispatchers.IO).launch {
+         var allItems = itemDaoCoroutines.getAllItems()
+         CoroutineScope(Dispatchers.Main).launch {
+             view.showData(allItems)
+         }
+     }*/
     }
 
     override fun onDestroy() = disposables.clear()
 
-    private fun onGetItems() = itemDao.getAllItems()
+    private fun onGetItems() = itemDaoRx.getAllItems()
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(view::showData, {
                 throwable ->
                 view.showLoadingDataError(throwable.localizedMessage)
             })
 
-    private fun onGetItemsAt() = itemDao.getItemsAt("Desk")
+    private fun onGetItemsAt() = itemDaoRx.getItemsAt("Desk")
             .filter { items -> items.isNotEmpty() }
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(view::showItemsAt, {
+            .subscribe(view::showData, {
                 throwable ->
                 view.showLoadingDataError(throwable.localizedMessage)
             })
@@ -46,16 +62,16 @@ class ItemsPresenter @Inject constructor(private val itemDao: ItemDao) : Present
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
                 .subscribe({ item ->
-                    itemDao.insertItem(item)
+                    itemDaoRx.insertItem(item)
                 }, { throwable -> view.showInsertingDataError(throwable.localizedMessage) })
     }
 
-    fun onDelete(item: Item)
+    fun onDelete(itemId: Long)
     {
-        Observable.just(item)
+        Observable.just(itemId)
                 .observeOn(Schedulers.io())
                 .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(itemDao::deleteItem
+                .subscribe(itemDaoRx::deleteItem
                         , { throwable ->
                     view.showInsertingDataError(throwable.localizedMessage)
                 })

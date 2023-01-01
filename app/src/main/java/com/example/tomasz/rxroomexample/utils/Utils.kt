@@ -8,12 +8,35 @@ class Utils
 {
     companion object
     {
+        fun randomItem(): Item {
+            return Item(
+                null,
+                names[Random().nextInt(names.size)],
+                places[Random().nextInt(places.size)],
+                "1",
+                descriptions[Random().nextInt(descriptions.size)],
+                ""
+            )
+        }
+
         val dateFormatter: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-        val items = arrayOf(
-                Item("Pencil", "Table", "2", "sharpest pencils in the world"),
-                Item("Screen", "Desk", "1", "broken screen"),
-                Item("Chair", "Bedroom", "3", "old chairs"),
-                Item("Keyboard", "Desk", "1", "weird keyboard")
+        val places =arrayOf(
+            "Table",
+            "Desk",
+            "Chair",
+            "Bed"
+        )
+        val descriptions = arrayOf(
+            "lorem ipsum",
+            "dolor sit amet",
+            "sed do elusmod tempor",
+            "At vero eos et accusamus"
+        )
+        val names = arrayOf(
+            "Pencil",
+            "Screen",
+            "Cable",
+            "Keyboard"
         )
     }
 }

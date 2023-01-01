@@ -2,6 +2,7 @@ package com.example.tomasz.rxroomexample
 
 import android.app.Activity
 import android.app.Application
+import dagger.android.ActivityKey
 import dagger.android.AndroidInjector
 import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
@@ -22,5 +23,7 @@ class InjectableApplication : Application(), HasActivityInjector
         applicationComponent.inject(this)
     }
 
-    override fun activityInjector(): AndroidInjector<Activity> = activityInjector
+    override fun activityInjector(): AndroidInjector<Activity>{
+        return activityInjector
+    }
 }

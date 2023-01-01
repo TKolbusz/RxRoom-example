@@ -1,22 +1,28 @@
 package com.example.tomasz.rxroomexample.items.recyclerview
 
-import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.widget.TextView
-import butterknife.bindView
-import com.example.tomasz.rxroomexample.R
+import androidx.recyclerview.widget.RecyclerView
+import com.example.tomasz.R
 import com.example.tomasz.rxroomexample.room.Item
 import com.example.tomasz.rxroomexample.utils.Utils
 import java.util.*
 
 class ItemViewHolder(view: View) : RecyclerView.ViewHolder(view)
 {
-    private val name: TextView by bindView(R.id.item_name_textView)
-    private val place: TextView by bindView(R.id.item_place_textView)
-    private val description: TextView by bindView(R.id.item_description_textView)
-    private val date: TextView by bindView(R.id.item_date_textView)
+    private val name: TextView
+    private val place: TextView
+    private val description: TextView
+    private val date: TextView
+    init {
+        name = view.findViewById(R.id.item_name_textView)
+        place =  view.findViewById(R.id.item_place_textView)
+        description = view.findViewById(R.id.item_description_textView)
+        date = view.findViewById(R.id.item_date_textView)
+    }
     fun bind(item: Item)
     {
+
         name.text = item.name
         place.text = item.place
         description.text = item.description
