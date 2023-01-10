@@ -69,6 +69,10 @@ class ItemsView @Inject constructor(activity: ItemsActivity) : RelativeLayout(ac
 
     fun showLoadingDataError(message: String) = showMessage(message)
 
-    fun showInsertingDataError(message: String) = showMessage(message)
+    fun showError(message: String) = showMessage(message)
+
+    fun showItemAddedMessage() = Toast.makeText(context, "Item added", Toast.LENGTH_SHORT).show()
+
+    fun showItemDeletedMessage()  =  Toast.makeText(context, "Item deleted", Toast.LENGTH_SHORT).show()
 
 }

@@ -8,9 +8,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ItemsPresenter @Inject constructor(
@@ -30,14 +27,6 @@ class ItemsPresenter @Inject constructor(
         )
     }
 
-    fun loadData(){
-        /*CoroutineScope(Dispatchers.IO).launch {
-         var allItems = itemDaoCoroutines.getAllItems()
-         CoroutineScope(Dispatchers.Main).launch {
-             view.showData(allItems)
-         }
-     }*/
-    }
 
     override fun onDestroy() = disposables.clear()
 
@@ -58,22 +47,25 @@ class ItemsPresenter @Inject constructor(
 
     fun onInsert(item: Item)
     {
-        Observable.just(item)
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe({ item ->
-                    itemDaoRx.insertItem(item)
-                }, { throwable -> view.showInsertingDataError(throwable.localizedMessage) })
+        val disposable = itemDaoRx.insertItem(item)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({view.showItemAddedMessage()},{error ->
+                view.showError(error.localizedMessage)
+            } )
+
+        this.disposables.add(disposable)
     }
 
     fun onDelete(itemId: Long)
     {
-        Observable.just(itemId)
-                .observeOn(Schedulers.io())
-                .subscribeOn(AndroidSchedulers.mainThread())
-                .subscribe(itemDaoRx::deleteItem
-                        , { throwable ->
-                    view.showInsertingDataError(throwable.localizedMessage)
-                })
+        val disposable = itemDaoRx.deleteItem(itemId)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({view.showItemDeletedMessage()},{error ->
+                view.showError(error.localizedMessage)
+            } )
+
+        this.disposables.add(disposable)
     }
 }
