@@ -8,64 +8,51 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ItemsPresenter @Inject constructor(
     private val itemDaoRx: ItemDaoRx,
     private val itemDaoCoroutines: ItemDaoCoroutines,
-    ) : Presenter<ItemsView>
-{
-    private val disposables: CompositeDisposable = CompositeDisposable()
+) : Presenter<ItemsView> {
     private lateinit var view: ItemsView
 
-    override fun onCreate(view: ItemsView)
-    {
+    override fun onCreate(view: ItemsView) {
         this.view = view
-        disposables.addAll(
-                onGetItems()
-                //onGetItemsAt()
-        )
+        onGetItems()
     }
 
+    override fun onDestroy() {
 
-    override fun onDestroy() = disposables.clear()
-
-    private fun onGetItems() = itemDaoRx.getAllItems()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(view::showData, {
-                throwable ->
-                view.showLoadingDataError(throwable.localizedMessage)
-            })
-
-    private fun onGetItemsAt() = itemDaoRx.getItemsAt("Desk")
-            .filter { items -> items.isNotEmpty() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(view::showData, {
-                throwable ->
-                view.showLoadingDataError(throwable.localizedMessage)
-            })
-
-    fun onInsert(item: Item)
-    {
-        val disposable = itemDaoRx.insertItem(item)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({view.showItemAddedMessage()},{error ->
-                view.showError(error.localizedMessage)
-            } )
-
-        this.disposables.add(disposable)
     }
 
-    fun onDelete(itemId: Long)
-    {
-        val disposable = itemDaoRx.deleteItem(itemId)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({view.showItemDeletedMessage()},{error ->
-                view.showError(error.localizedMessage)
-            } )
+    private fun onGetItems() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val items = itemDaoCoroutines.getAllItems()
+            CoroutineScope(Dispatchers.Main).launch{
+                view.showData(items)
+            }
+        }
+    }
+    fun onInsert(item: Item) {
+        CoroutineScope(Dispatchers.IO).launch {
+            itemDaoCoroutines.insertItem(item)
+            CoroutineScope(Dispatchers.Main).launch{
+                view.showItemAddedMessage()
+            }
+            onGetItems()
+        }
+    }
 
-        this.disposables.add(disposable)
+    fun onDelete(itemId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            itemDaoCoroutines.deleteItem(itemId)
+            CoroutineScope(Dispatchers.Main).launch{
+                view.showItemDeletedMessage()
+            }
+            onGetItems()
+        }
     }
 }
