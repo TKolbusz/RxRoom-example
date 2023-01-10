@@ -13,17 +13,15 @@ import javax.inject.Inject
 class ItemsPresenter @Inject constructor(
     private val itemDaoRx: ItemDaoRx,
     private val itemDaoCoroutines: ItemDaoCoroutines,
-    ) : Presenter<ItemsView>
-{
+) : Presenter<ItemsView> {
     private val disposables: CompositeDisposable = CompositeDisposable()
     private lateinit var view: ItemsView
 
-    override fun onCreate(view: ItemsView)
-    {
+    override fun onCreate(view: ItemsView) {
         this.view = view
         disposables.addAll(
-                onGetItems()
-                //onGetItemsAt()
+            onGetItems()
+            //onGetItemsAt()
         )
     }
 
@@ -31,40 +29,29 @@ class ItemsPresenter @Inject constructor(
     override fun onDestroy() = disposables.clear()
 
     private fun onGetItems() = itemDaoRx.getAllItems()
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(view::showData, {
-                throwable ->
-                view.showLoadingDataError(throwable.localizedMessage)
-            })
+        .observeOn(AndroidSchedulers.mainThread())
+        .subscribe(view::showData, { throwable ->
+            view.showLoadingDataError(throwable.localizedMessage ?: "Unknown error")
+        })
 
-    private fun onGetItemsAt() = itemDaoRx.getItemsAt("Desk")
-            .filter { items -> items.isNotEmpty() }
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(view::showData, {
-                throwable ->
-                view.showLoadingDataError(throwable.localizedMessage)
-            })
-
-    fun onInsert(item: Item)
-    {
+    fun onInsert(item: Item) {
         val disposable = itemDaoRx.insertItem(item)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({view.showItemAddedMessage()},{error ->
-                view.showError(error.localizedMessage)
-            } )
+            .subscribe({ view.showItemAddedMessage() }, { error ->
+                view.showError(error.localizedMessage ?: "Unknown error")
+            })
 
         this.disposables.add(disposable)
     }
 
-    fun onDelete(itemId: Long)
-    {
+    fun onDelete(itemId: Long) {
         val disposable = itemDaoRx.deleteItem(itemId)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({view.showItemDeletedMessage()},{error ->
+            .subscribe({ view.showItemDeletedMessage() }, { error ->
                 view.showError(error.localizedMessage)
-            } )
+            })
 
         this.disposables.add(disposable)
     }
